@@ -1,2 +1,28 @@
 {% extends "base.html" %}
 {% block content %}
+<h1> A BLOG ENTRY </h1>
+<div>
+    <form action = "{{url_for('newpost')}}", method = 'POST'>
+        <label>
+            BLOG TITLE 
+            <br />
+            <input name = "blog_title", type = "text" value = "{{blog_title_content}}" />
+        </label>
+        <p>
+            <span class = "error">{{blog_title_error}}</span>
+        </p>
+        <br />
+     
+        <label>
+              Your New Blog Post
+              <textarea name = "blog_post">{{blog_post_content}}</textarea>
+        </label>
+
+        <p>
+            <span class = "error">{{blog_body_error}}</span>
+        </p>
+        <br />
+        <input type = "submit" value = "Add Entry" />
+    </form>
+</div>
+{% endblock %}

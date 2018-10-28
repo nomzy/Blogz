@@ -1,18 +1,24 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>{{title}}</title>
+        <title>
+            {% block title %}{% endblock %}
+        </title>
     </head>
 <body>
-    <nav>
-        <a href="/html/">HTML</a>
-        <a href="/css/">CSS</a>
-        <a href="/js/">JavaScript</a>
-        <a href="/jquery">jQuery</a>
-    </nav>
 
-    {% block content %}
-    {% endblock %}
-    
+<div class = "main-page">
+    <div>
+        <div class = "nav-bar"></div>
+            <a href ="{{url_for('blog')}}">HOME</a>
+            <a href ="{{url_for('newpost')}}">Make A new post</a>
+        </div>
+    </div>
+
+    <div>
+        {% block content %}
+        {% endblock %}
+    </div>
+</div>
 </body>
 </html>
