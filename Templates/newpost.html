@@ -1,4 +1,26 @@
 {% extends "base.html" %}
+{% block style %}
+    .error {
+        color: red
+    } 
+    form {
+         background-color: #eee;
+         padding: 20px;
+         margin: 0 auto;
+         width: 540px;
+         font: 16px sans-serif;
+         border-radius: 10px;
+         }
+            
+         textarea {
+             margin: 10px 0;
+             width: 540px;
+             height: 120px;
+            }
+      h1 {
+        text-align: center;
+       }  
+{% endblock %}
 {% block content %}
 <h1> A BLOG ENTRY </h1>
 <div>
@@ -12,7 +34,7 @@
             <span class = "error">{{blog_title_error}}</span>
         </p>
         <br />
-     
+        
         <label>
               Your New Blog Post
               <textarea name = "blog_post">{{blog_post_content}}</textarea>

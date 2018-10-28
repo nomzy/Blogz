@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URL'] = 'mysql+pymysql://build-a-blog:root@localhost:8889/build-a-blog'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build-a-blog:root@localhost:8889/build-a-blog'
 
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
@@ -18,20 +18,21 @@ class Blog(db.Model):
         self.blog_title = blog_title
         self.blog_post = blog_post
         
+db.create_all()
+db.session.commit()
 
-
-@app.route('/')
+@app.route('/', methods=('POST','GET'))
 def index():
     return render_template('newpost.html')
 
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
-    blog_posts = blog.query.all()
+    blog_posts = Blog.query.all()
     blog_id = request.args.get('id')
-    if blog_id is none:
+    if blog_id is None:
         return render_template("blog.html", title="BUILD A BLOG", blogposts = blog_posts)
     else:
-        blog_content = blog.query.get(blog_id)
+        blog_content = Blog.query.get(blog_id)
         return render_template("single-post.html", blog_title = blog_content.blog_title, blog_content = blog_content.blog_post)
     return render_template('blog.html')
 
@@ -57,9 +58,9 @@ def newpost():
         if blog_title_error or blog_body_error:
             return render_template("newpost.html",blog_title_content = blog_title_content,blog_post_content = blog_post_content,blog_title_error = blog_title_error,blog_body_error = blog_body_error)
         else:
-            blog_title = request.form["blog_title"]
+            blogtitle = request.form["blog_title"]
             newpost = request.form["blog_post"]
-            new_blog = Blog(blog_title,newpost)
+            new_blog = Blog(blogtitle,newpost)
             db.session.add(new_blog)
             db.session.commit()
             return redirect(url_for("blog", id = [new_blog.id]))

@@ -1,4 +1,16 @@
 {% extends "base.html" %}
+{% block style %}
+ h1 {
+    text-align: center;
+    font-size: 60   px;
+    font-family: ubuntu;:wq
+   }
+   ul {
+       list-style: none;
+       margin: 0;
+       padding: 0;
+    }
+{% endblock %}
 {% block content %}
 <div>
   <h1>{{title}}</h1>
@@ -12,14 +24,14 @@
     <ul>
         {% for post in blogposts%}
         <li>
-            <a href ="./blog?id={{blog_post_content.id"}}>{{blog_post_content.blog_title}}</a>
+            <a href ="./blog?id={{post.id}}">{{post.blog_title}}</a>
         </li>
         <li>
-             {{blog_post_centent.blog_post}}
+             {{post.blog_post}}
         </li>
         <br />
 
-        {% endfor%}
+        {% endfor %}
     </ul>
     {% endif %}
 </div>

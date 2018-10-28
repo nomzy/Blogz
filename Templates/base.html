@@ -1,9 +1,15 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>
-            {% block title %}{% endblock %}
-        </title>
+        <meta content="initial-scale = 1, width = device-width" name = "viewport"/>
+        <style>
+            nav {
+                text-align: center;
+                }
+            {% block style %}
+            {% endblock %}
+        </style>        
+        <title>{% block title %}{% endblock %}</title>
     </head>
 <body>
 
