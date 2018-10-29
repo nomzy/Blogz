@@ -1,9 +1,9 @@
-from flask import Flask, request, redirect, render_template, url_for
+from flask import Flask, request, redirect, render_template, url_for, session
 from flask_sqlalchemy import SQLAlchemy 
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://build-a-blog:root@localhost:8889/build-a-blog'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://Blogz:root@localhost:8889/Blogz'
 
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
@@ -12,11 +12,35 @@ class Blog(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     blog_title= db.Column(db.String(120))
     blog_post = db.Column(db.Text)
-    
-    
-    def __init__(self, blog_title, blog_post):
+    owner_id = db.column(db.Integer,db.Foreignkey('user id'))
+  
+    def __init__(self, blog_title, blog_post, owner):
         self.blog_title = blog_title
         self.blog_post = blog_post
+        self.owner = owner
+        
+class User(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    username = db.Column(db.String(150))
+    password = db.Column(db.String(50))
+    blogs = db.relationship('Blog',backref='author')
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
+# @app.route('/')
+# def signup():
+
+# @app.route('/')
+# def login():
+
+# @app.route('/')
+# def index():
+
+# @app.route('/logout', methods=['POST'])
+# def logout():
+    
 
 @app.route('/', methods=('POST','GET'))
 def index():
@@ -27,7 +51,7 @@ def blog():
     blog_posts = Blog.query.all()
     blog_id = request.args.get('id')
     if blog_id is None:
-        return render_template("blog.html", title="BUILD A BLOG", blogposts = blog_posts)
+        return render_template("blog.html", title="BLOGZ", blogposts = blog_posts)
     else:
         blog_content = Blog.query.get(blog_id)
         return render_template("single-post.html", blog_title = blog_content.blog_title, blog_content = blog_content.blog_post)
@@ -35,6 +59,7 @@ def blog():
 
 @app.route('/newpost', methods = ['POST','GET'])
 def newpost():
+    owner = user.query.filter_by(username=session['username']).first()
     if request.method == "POST":
         blog_title_error = ""
         blog_body_error = ""
