@@ -17,9 +17,6 @@ class Blog(db.Model):
     def __init__(self, blog_title, blog_post):
         self.blog_title = blog_title
         self.blog_post = blog_post
-        
-db.create_all()
-db.session.commit()
 
 @app.route('/', methods=('POST','GET'))
 def index():
