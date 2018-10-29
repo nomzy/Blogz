@@ -12,7 +12,7 @@ class Blog(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     blog_title= db.Column(db.String(120))
     blog_post = db.Column(db.Text)
-    owner_id = db.column(db.Integer,db.Foreignkey('user id'))
+    owner_id = db.column(db.Integer,db.ForeignKey('user.id'))
   
     def __init__(self, blog_title, blog_post, owner):
         self.blog_title = blog_title
@@ -23,7 +23,7 @@ class User(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(150))
     password = db.Column(db.String(50))
-    blogs = db.relationship('Blog',backref='author')
+    blogs = db.relationship('Blog',backref='owner')
 
     def __init__(self, username, password):
         self.username = username
