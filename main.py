@@ -104,24 +104,33 @@ def login():
 # @app.route('/')
 # def index():
 
-# @app.route('/logout', methods=['POST'])
-# def logout():
+@app.route('/logout')
+def logout():
+    del session['username']
+    return redirect(url_for('blog'))
     
-
 @app.route('/', methods=('POST','GET'))
 def index():
     return render_template('newpost.html')
 
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
+    owners = User.query.all()
     blog_posts = Blog.query.all()
-    blog_id = request.args.get('id')
-    if blog_id is None:
-        return render_template("blog.html", title="BLOGZ", blogposts = blog_posts)
+    users_blog_entries = []
+
+    if "id" in request.args:
+        blog_id = request.args.get('id')
+        blog_entry = Blog.query.get(blog_id)
+        return render_template("single-post.html", blog_title = blog_content.blog_title, blog_content = blog_content.blog_post, username = blog_entry.owner.username)
+    elif "user" in request.args:
+        blog_user = request.args.get("user")
+        for owner in owners:
+            if owner.username == blog_user:
+                users_blog_entries = Blog.query.filter_by(owner = owner).all()
+        return render_template("single_user.html", user_entries = users_blog_entries)
     else:
-        blog_content = Blog.query.get(blog_id)
-        return render_template("single-post.html", blog_title = blog_content.blog_title, blog_content = blog_content.blog_post)
-    return render_template('blog.html')
+        return render_template("blogz.html", title = "BLOG POSTS!", blogposts = blog_posts)
 
 @app.route('/newpost', methods = ['POST','GET'])
 def newpost():
