@@ -29,11 +29,77 @@ class User(db.Model):
         self.username = username
         self.password = password
 
-# @app.route('/')
-# def signup():
+@app.before_request
+def require_login():
+    allowed_routes = ['login','blog','index','signup']
+    if request.endpoint not in allowed_routes and 'username' not in session:
+        return redirect(url_for('login'))
 
-# @app.route('/')
-# def login():
+
+@app.route('/signup', methods = ['POST', 'GET'])
+def signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password'] 
+        verify_password = request.form['verify']
+        email = request.form['email']
+
+        username_error_msg =""
+        password_error_msg =""
+        verify_password_error_msg =""
+        email_error_msg =""
+
+        if len(username) < 3 or len(username) > 20 or " " in username:
+            username_error_msg = "Invalid username"
+            username = ""
+        if len(password) < 3 or len(password) > 20 or " " in password:
+            password_error_msg = "Invalid Password"
+            password = "" 
+        if password != verify_password or verify_password =="":
+            verify_password_error_msg = "Password does not match"
+            verify_password = ""
+        if email != "" and len(email) < 3 or len(email) > 20:
+            email_error_msg = "Incorrect email"
+            email= ""
+
+        elif email != "" and (" " not in email or "@" not in email or "." not in email):
+            email_error_msg = "Incorrect email"
+            email = ""
+
+        if not username_error_msg and not password_error_msg and not verify_password_error_msg and not email_error_msg:
+            existing_user =User.query.filter_by(username = username).first()
+            if not existing_user:
+                new_user = User(username, password)
+                db.session.add(new_user)
+                db.session.commit()
+                session['username'] = username
+                   return redirect(url_for('newpost'))
+            else:
+                flash('User Already Exist', "error_message")
+        else:
+            return render_template('signup.html', username_error_msg = username_error_msg, password_error_msg = password_error_msg,verify_password_error_msg = verify_password_error_msg,email_error_msg = email_error_msg, username = username, email =email)
+    return render_template('signup.html')
+
+
+@app.route('/login', methods = ['POST', 'GET'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username = username).first()
+
+        if user is None:
+            flash('User does not exist','Error_message')
+            return redirect(url_for('login'))
+        else:
+            if user.password == password:
+                session ['username'] = username
+                return redirect(url_for('newpost'))
+            elif user.password != password:
+                flash('Incorrect Password')
+                return redirect(url_for('login'))
+    return render_template('login.html')
+
 
 # @app.route('/')
 # def index():
