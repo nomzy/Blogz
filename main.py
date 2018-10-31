@@ -101,9 +101,6 @@ def login():
     return render_template('login.html')
 
 
-# @app.route('/')
-# def index():
-
 @app.route('/logout')
 def logout():
     del session['username']
@@ -111,7 +108,8 @@ def logout():
     
 @app.route('/', methods=('POST','GET'))
 def index():
-    return render_template('newpost.html')
+    users = User.query.all()
+    return render_template('index.html', users = users)
 
 @app.route('/blog', methods=['POST', 'GET'])
 def blog():
@@ -128,7 +126,7 @@ def blog():
         for owner in owners:
             if owner.username == blog_user:
                 users_blog_entries = Blog.query.filter_by(owner = owner).all()
-        return render_template("single_user.html", user_entries = users_blog_entries)
+        return render_template("singleUser.html", user_entries = users_blog_entries)
     else:
         return render_template("blogz.html", title = "BLOG POSTS!", blogposts = blog_posts)
 
