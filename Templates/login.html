@@ -1,0 +1,43 @@
+{% extends 'base.html'%} {% block content %}
+{% block style %}
+
+{% endblock %}
+
+{% block h1 %}
+{% endblock %}
+
+{% block content %}
+<form action = '{{url_for('LOGIN')}}' method = 'POST'>
+    <table>
+        <thead>
+            <tr>
+                <th colspan = 2>LOGIN</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <label for = 'username'>Username</label>
+                </td>
+                <td>
+                    <input name = 'username' type = text placeholder ='Username' id = 'username' value = '{{username}}'></input>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for = 'password'>Password</label>
+                </td>
+                <td>
+                    <input name = 'password' type = text placeholder ='Password' id = 'password'></input>
+                </td>
+            </tr>
+            <tr>
+                <td colspan = 2> <input type = 'submit' value + 'SUBMIT'/></td>
+            </tr>
+            <tr>
+                <td>Don't have an account? <a href = '{{url_for('signup')}}'>CREATE ONE!</a></td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+{% endblock %}
