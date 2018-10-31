@@ -10,19 +10,19 @@
    {% if user_entries | length == 0 %}
       <p> NO POST BY THIS USER </p>
    {% else %}
-       {% for user_entry in user_enteries %}
+       {% for user_entry in user_entries %}
          <h2>
-             <a href = './blog?ide={{user_entry.id}}'>{{user_entry.blog_tittle}}</a>
+             <a href = './blog?id={{user_entry.id}}'>{{user_entry.blog_title}}</a>
          </h2>
          <p>
-             {{user_entry.blog_post}}
+            {{user_entry.blog_post}}
          </p>
          <p>
-             <i>
-                 Written by <a href = './blog?user={{user_entry.owner.username}}'>{{user_entry.owner}}</a>
-             </i>
+            <i>
+                Written by <a href = './blog?user={{user_entry.owner.username}}'>{{user_entry.owner.username}}</a>
+            </i>
          </p>
-       {% endof %}
+       {% endfor %}
    {% endif %}
 
 {% endblock %}

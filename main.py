@@ -1,33 +1,34 @@
-from flask import Flask, request, redirect, render_template, url_for, session
+from flask import Flask, request, redirect, render_template, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy 
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://Blogz:root@localhost:8889/Blogz'
+app.secret_key = "hellohalloween2018"
 
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
-
-class Blog(db.Model):
-    id = db.Column(db.Integer,primary_key=True)
-    blog_title= db.Column(db.String(120))
-    blog_post = db.Column(db.Text)
-    owner_id = db.column(db.Integer,db.ForeignKey('user.id'))
-  
-    def __init__(self, blog_title, blog_post, owner):
-        self.blog_title = blog_title
-        self.blog_post = blog_post
-        self.owner = owner
-        
+   
 class User(db.Model):
     id = db.Column(db.Integer,primary_key=True)
-    username = db.Column(db.String(150))
+    username = db.Column(db.String(150),unique = True)
     password = db.Column(db.String(50))
     blogs = db.relationship('Blog',backref='owner')
 
     def __init__(self, username, password):
         self.username = username
         self.password = password
+
+class Blog(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    blog_title= db.Column(db.String(120))
+    blog_post = db.Column(db.Text)
+    owner_id = db.Column(db.Integer,db.ForeignKey('user.id'))
+  
+    def __init__(self, blog_title, blog_post, owner):
+        self.blog_title = blog_title
+        self.blog_post = blog_post
+        self.owner = owner
 
 @app.before_request
 def require_login():
@@ -73,7 +74,7 @@ def signup():
                 db.session.add(new_user)
                 db.session.commit()
                 session['username'] = username
-                   return redirect(url_for('newpost'))
+                return redirect(url_for('newpost'))
             else:
                 flash('User Already Exist', "error_message")
         else:
@@ -119,8 +120,8 @@ def blog():
 
     if "id" in request.args:
         blog_id = request.args.get('id')
-        blog_entry = Blog.query.get(blog_id)
-        return render_template("single-post.html", blog_title = blog_content.blog_title, blog_content = blog_content.blog_post, username = blog_entry.owner.username)
+        blog_content = Blog.query.get(blog_id)
+        return render_template("single-post.html", blog_title = blog_content.blog_title, blog_content = blog_content.blog_post, username = blog_content.owner.username)
     elif "user" in request.args:
         blog_user = request.args.get("user")
         for owner in owners:
@@ -132,7 +133,7 @@ def blog():
 
 @app.route('/newpost', methods = ['POST','GET'])
 def newpost():
-    owner = user.query.filter_by(username=session['username']).first()
+    owner = User.query.filter_by(username=session['username']).first()
     if request.method == "POST":
         blog_title_error = ""
         blog_body_error = ""
@@ -155,7 +156,7 @@ def newpost():
         else:
             blogtitle = request.form["blog_title"]
             newpost = request.form["blog_post"]
-            new_blog = Blog(blogtitle,newpost)
+            new_blog = Blog(blogtitle, newpost, owner)
             db.session.add(new_blog)
             db.session.commit()
             return redirect(url_for("blog", id = [new_blog.id]))
